@@ -11,4 +11,6 @@ export type MediaItem = {
     rating: number
     genre: string
     favorite: boolean
+
 }
+export type MediaDraft = Omit<MediaItem, 'id'>

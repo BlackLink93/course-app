@@ -10,6 +10,12 @@ export function AppLayout() {
                     <NavLink to="/media/new">Добавить</NavLink>
                 </nav>
             </header>
+
+            <p className="notice">
+                Изменения хранятся только в памяти браузера. После обновления страницы
+                вернутся демонстрационные записи.
+            </p>
+
             <main><Outlet /></main>
         </div>
     )

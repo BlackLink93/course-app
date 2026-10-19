@@ -1,5 +1,10 @@
-import { Link, useParams } from 'react-router'
-import { mediaItems } from '../data/media'
+import { Link, useParams, useNavigate } from 'react-router'
+import type { MediaItem } from '../types/media'
+
+type MediaDetailsPageProps = {
+    items: MediaItem[]
+    onDelete: (id: string) => void
+}
 
 const kindLabels: Record<string, string> = {
     movie: 'Фильм',
@@ -12,9 +17,10 @@ const statusLabels: Record<string, string> = {
     watched: 'Просмотрено',
 }
 
-export function MediaDetailsPage() {
+export function MediaDetailsPage({ items, onDelete }: MediaDetailsPageProps) {
     const { id } = useParams()
-    const item = mediaItems.find((media) => media.id === id)
+    const navigate = useNavigate()
+    const item = items.find((media) => media.id === id)
 
     if (!item) {
         return (
@@ -36,7 +42,21 @@ export function MediaDetailsPage() {
             <p>Статус просмотра: {statusLabels[item.status]}</p>
             <p>Оценка: {item.rating} из 10</p>
             <p>В избранном: {item.favorite ? 'да' : 'нет'}</p>
-            <Link to="/media">К списку записей</Link>
+
+            <div className="actions">
+                <Link to={`/media/${item.id}/edit`}>Редактировать</Link>
+
+                <button type="button" onClick={() => {
+                    if (window.confirm(`Удалить запись «${item.title}»?`)) {
+                        onDelete(item.id)
+                        navigate('/media', { replace: true })
+                    }
+                }}>
+                    Удалить
+                </button>
+
+                <Link to="/media">К списку записей</Link>
+            </div>
         </section>
     )
 }
