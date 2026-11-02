@@ -1,5 +1,6 @@
 import { Link, useParams, useNavigate } from 'react-router'
 import type { MediaItem } from '../types/media'
+import { useGenres } from '../hooks/useGenres'
 
 type MediaDetailsPageProps = {
     items: MediaItem[]
@@ -21,6 +22,7 @@ export function MediaDetailsPage({ items, onDelete }: MediaDetailsPageProps) {
     const { id } = useParams()
     const navigate = useNavigate()
     const item = items.find((media) => media.id === id)
+    const { load } = useGenres()
 
     if (!item) {
         return (
@@ -32,13 +34,17 @@ export function MediaDetailsPage({ items, onDelete }: MediaDetailsPageProps) {
         )
     }
 
+    const genreName = load.status === 'success'
+        ? load.data.find((genre) => genre.id === item.genre)?.name
+        : undefined
+
     return (
         <section>
             <h1>{item.title}</h1>
             <p>{item.description}</p>
             <p>Тип: {kindLabels[item.kind]}</p>
             <p>Год выхода: {item.year}</p>
-            <p>Жанр: {item.genre}</p>
+            <p>Жанр: {genreName ?? item.genre}</p>
             <p>Статус просмотра: {statusLabels[item.status]}</p>
             <p>Оценка: {item.rating} из 10</p>
             <p>В избранном: {item.favorite ? 'да' : 'нет'}</p>
@@ -59,4 +65,4 @@ export function MediaDetailsPage({ items, onDelete }: MediaDetailsPageProps) {
             </div>
         </section>
     )
-}
+}

@@ -9,8 +9,7 @@ export type MediaItem = {
     status: WatchStatus
     year: number
     rating: number
-    genre: string
+    genre: string // id из справочника жанров (public/demo/genres.json)
     favorite: boolean
-
 }
-export type MediaDraft = Omit<MediaItem, 'id'>
+export type MediaDraft = Omit<MediaItem, 'id'>

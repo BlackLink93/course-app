@@ -9,7 +9,7 @@ export const mediaItems: MediaItem[] = [
         status: 'watched',
         year: 2010,
         rating: 9,
-        genre: 'Фантастика',
+        genre: 'sci-fi',
         favorite: false,
     },
     {
@@ -20,7 +20,7 @@ export const mediaItems: MediaItem[] = [
         status: 'watching',
         year: 2008,
         rating: 10,
-        genre: 'Драма',
+        genre: 'drama',
         favorite: true,
     },
     {
@@ -31,7 +31,7 @@ export const mediaItems: MediaItem[] = [
         status: 'planned',
         year: 2021,
         rating: 8,
-        genre: 'Фантастика',
+        genre: 'sci-fi',
         favorite: false,
     },
     {
@@ -42,7 +42,7 @@ export const mediaItems: MediaItem[] = [
         status: 'watched',
         year: 2006,
         rating: 10,
-        genre: 'Триллер',
+        genre: 'thriller',
         favorite: true,
     },
     {
@@ -53,7 +53,7 @@ export const mediaItems: MediaItem[] = [
         status: 'planned',
         year: 2014,
         rating: 9,
-        genre: 'Фантастика',
+        genre: 'sci-fi',
         favorite: true,
     },
-]
+]

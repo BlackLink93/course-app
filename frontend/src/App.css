@@ -89,6 +89,26 @@ form p[role="alert"] {
   margin: 16px 0 0;
 }
 
+form .required-mark {
+  color: #b01e28;
+}
+
+form .form-note {
+  margin: 0;
+  color: #555;
+}
+
+form .field-error {
+  color: #b01e28;
+  margin: 2px 0 0;
+  font-size: 0.9em;
+}
+
+form [aria-invalid="true"] {
+  border-color: #b01e28;
+  outline-color: #b01e28;
+}
+
 form button {
   font: inherit;
   padding: 10px 20px;
