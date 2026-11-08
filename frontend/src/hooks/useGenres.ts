@@ -15,7 +15,9 @@ export function useGenres() {
         const controller = new AbortController()
         let active = true
 
-        setLoad({ status: 'loading' })
+        // Состояние loading здесь не выставляем: при первом запуске оно уже
+        // начальное, а при повторе его заранее ставит retry(). Синхронный
+        // setState в теле эффекта запрещает правило react-hooks/set-state-in-effect.
         getGenres(controller.signal)
             .then((data) => {
                 if (active) setLoad({ status: 'success', data })
