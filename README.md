@@ -15,18 +15,30 @@
 
 ## Стек
 
-React, TypeScript, Vite. Node.js 24.21.0.
-Позже будут добавлены Supabase и backend на Node.js.
+React, TypeScript, Vite, Supabase (PostgreSQL). Node.js 24.21.0.
+Позже будет добавлен backend на Node.js.
 
 ## Запуск
 
-Из корня скачанного проекта:
+1. Создайте проект Supabase и выполните в SQL Editor по порядку
+   `supabase/migrations/202611082300_initial_schema.sql` и `supabase/seed.sql`.
+2. Скопируйте `frontend/.env.example` в `frontend/.env.local` и укажите
+   URL проекта и publishable key.
+3. Из корня скачанного проекта:
 
 ```bash
 cd frontend
 npm ci
 npm run dev
 ```
+
+## Переменные окружения
+
+- `VITE_SUPABASE_URL` — URL проекта Supabase.
+- `VITE_SUPABASE_PUBLISHABLE_KEY` — publishable key.
+
+Значения хранятся только в `frontend/.env.local`, который не попадает в Git.
+Secret key, service_role и пароль базы во frontend не используются.
 
 ## Проверка сборки
 
@@ -47,14 +59,21 @@ npm run preview
 - `/media/new` — добавление записи
 - `/media/:id/edit` — редактирование записи
 
+## Схема данных
+
+- `genres` — публичный справочник жанров. Читают все, изменять из браузера нельзя.
+- `media_entries` — личные записи пользователя (`owner_id`, `genre_id` → `genres.id`).
+  Пока закрыта от клиентских ролей.
+
+SQL схемы и прав — в `supabase/migrations`, начальные жанры — в `supabase/seed.sql`.
+
 ## Источник справочника жанров
 
-Жанры загружаются по HTTP из файла `frontend/public/demo/genres.json`,
-который раздаёт Vite по адресу `/demo/genres.json`. Запрос выполняет
-сервис `frontend/src/services/genres.ts`, он проверяет HTTP-статус
-и структуру JSON. В записи хранится id жанра, в форме показывается его
-название. Пока справочник не загружен или жанр не выбран, сохранить
-запись нельзя. В ЛР 5 источник справочника будет заменён на Supabase.
+Жанры загружаются из таблицы Supabase `genres` через сервис
+`frontend/src/services/genres.ts`, который проверяет ошибку запроса и структуру
+ответа. В записи хранится id жанра, в форме показывается его название.
+Пока справочник не загружен или жанр не выбран, сохранить запись нельзя.
+Кнопка «Обновить справочник» загружает жанры заново, не стирая черновик.
 
 ## Текущие ограничения
 

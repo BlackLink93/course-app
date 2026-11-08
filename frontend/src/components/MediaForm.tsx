@@ -214,6 +214,14 @@ export function MediaForm(props: MediaFormProps) {
                 ))}
             </select>
 
+            {load.status === 'success' && (
+                // Кнопка видна только после успешной загрузки. Нажатие переводит
+                // справочник в loading, и на это время кнопка скрывается — так повторный
+                // запрос нельзя запустить, пока идёт предыдущий.
+                <button type="button" onClick={retry}>
+                    Обновить справочник
+                </button>
+            )}
             {load.status === 'success' && genres.length > 0 && draft.genre === '' && (
                 <p className="field-error">
                     Выберите жанр — без него кнопка «Сохранить» недоступна.

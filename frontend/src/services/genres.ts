@@ -1,4 +1,5 @@
 import type { Genre } from '../types/genre'
+import { supabase } from '../lib/supabase'
 
 function isGenre(value: unknown): value is Genre {
     if (typeof value !== 'object' || value === null) return false
@@ -22,16 +23,18 @@ export function parseGenres(value: unknown): Genre[] {
     return genres
 }
 
-const genresUrl = `${import.meta.env.BASE_URL}demo/genres.json`
-
 export async function getGenres(signal: AbortSignal): Promise<Genre[]> {
-    const response = await fetch(genresUrl, {
-        signal,
-        cache: 'no-store',
-    })
-    if (!response.ok) {
-        throw new Error(`Не удалось загрузить жанры: HTTP ${response.status}`)
+    const { data, error } = await supabase
+        .from('genres')
+        .select('id, name')
+        .order('name')
+        .abortSignal(signal)
+
+    if (signal.aborted) {
+        throw new DOMException('Запрос отменён', 'AbortError')
     }
-    const value: unknown = await response.json()
-    return parseGenres(value)
+    if (error) {
+        throw new Error(`Не удалось загрузить жанры: ${error.message}`)
+    }
+    return parseGenres(data)
 }
