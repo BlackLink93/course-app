@@ -1,11 +1,16 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { MediaCard } from '../components/MediaCard'
-import type { MediaItem, WatchStatus } from '../types/media'
+import { ItemsStatus } from '../components/ItemsStatus'
+import type { ItemsLoad, MediaItem, WatchStatus } from '../types/media'
 
-type MediaPageProps = { items: MediaItem[] }
+type MediaPageProps = {
+    items: MediaItem[]
+    load: ItemsLoad
+    onRetry: () => void
+}
 
-export function MediaPage({ items }: MediaPageProps) {
+export function MediaPage({ items, load, onRetry }: MediaPageProps) {
     const [status, setStatus] = useState<WatchStatus | 'all'>('all')
 
     const visibleItems = items.filter((item) =>
@@ -33,7 +38,9 @@ export function MediaPage({ items }: MediaPageProps) {
                 <button type="button" onClick={() => setStatus('all')}>Сбросить фильтр</button>
             </div>
 
-            {items.length === 0 ? (
+            {load.status !== 'success' ? (
+                <ItemsStatus load={load} onRetry={onRetry} />
+            ) : items.length === 0 ? (
                 <p>Записей пока нет.</p>
             ) : visibleItems.length === 0 ? (
                 <p>Нет записей с таким статусом.</p>

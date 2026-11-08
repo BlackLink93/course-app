@@ -3,7 +3,7 @@ import { MediaForm } from '../components/MediaForm'
 import type { MediaDraft } from '../types/media'
 
 type NewMediaPageProps = {
-    onCreate: (draft: MediaDraft) => string
+    onCreate: (draft: MediaDraft) => Promise<string>
 }
 
 const emptyMedia: MediaDraft = {
@@ -20,8 +20,10 @@ const emptyMedia: MediaDraft = {
 export function NewMediaPage({ onCreate }: NewMediaPageProps) {
     const navigate = useNavigate()
 
-    function handleSave(draft: MediaDraft) {
-        const id = onCreate(draft)
+    // Ошибку создания перехватит форма и покажет рядом с кнопкой,
+    // а введённые значения останутся на месте.
+    async function handleSave(draft: MediaDraft) {
+        const id = await onCreate(draft)
         navigate(`/media/${id}`)
     }
 

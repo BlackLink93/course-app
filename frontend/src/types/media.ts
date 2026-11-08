@@ -13,3 +13,9 @@ export type MediaItem = {
     favorite: boolean
 }
 export type MediaDraft = Omit<MediaItem, 'id'>
+
+// Состояние загрузки личного списка из Supabase.
+export type ItemsLoad =
+    | { status: 'loading' }
+    | { status: 'error'; message: string }
+    | { status: 'success' }

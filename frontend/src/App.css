@@ -182,3 +182,46 @@ form button[type="button"] {
   border-left: 3px solid #d98b00;
   font-size: 15px;
 }
+
+.user-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-bar button,
+.auth-modes button,
+.load-error button {
+  font: inherit;
+  padding: 6px 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.auth-modes {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.auth-modes button[aria-pressed="true"] {
+  background: #b01e28;
+  border-color: #b01e28;
+  color: #fff;
+}
+
+form button:disabled,
+.user-bar button:disabled,
+.actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-message {
+  color: #1d6b2f;
+  font-weight: bold;
+  margin: 16px 0 0;
+}

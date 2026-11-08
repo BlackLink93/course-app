@@ -1,17 +1,32 @@
 import { Link, useParams, useNavigate } from 'react-router'
 import { MediaForm } from '../components/MediaForm'
-import type { MediaItem, MediaDraft } from '../types/media'
+import { ItemsStatus } from '../components/ItemsStatus'
+import type { ItemsLoad, MediaItem, MediaDraft } from '../types/media'
 
 type EditMediaPageProps = {
     items: MediaItem[]
-    onUpdate: (id: string, draft: MediaDraft) => void
+    load: ItemsLoad
+    onRetry: () => void
+    onUpdate: (id: string, draft: MediaDraft) => Promise<void>
 }
 
-export function EditMediaPage({ items, onUpdate }: EditMediaPageProps) {
+export function EditMediaPage({ items, load, onRetry, onUpdate }: EditMediaPageProps) {
     const { id } = useParams()
     const navigate = useNavigate()
+
+    // Пока список не загружен, нельзя говорить «запись не найдена».
+    if (load.status !== 'success') {
+        return (
+            <section>
+                <h1>Редактирование записи</h1>
+                <ItemsStatus load={load} onRetry={onRetry} />
+            </section>
+        )
+    }
+
     const item = items.find((media) => media.id === id)
 
+    // Чужая запись скрыта RLS и выглядит так же, как несуществующая.
     if (!item) {
         return (
             <section>
@@ -39,8 +54,8 @@ export function EditMediaPage({ items, onUpdate }: EditMediaPageProps) {
             <MediaForm
                 key={item.id}
                 initialValues={initialValues}
-                onSave={(draft) => {
-                    onUpdate(item.id, draft)
+                onSave={async (draft) => {
+                    await onUpdate(item.id, draft)
                     navigate(`/media/${item.id}`)
                 }}
                 onCancel={() => navigate(`/media/${item.id}`)}

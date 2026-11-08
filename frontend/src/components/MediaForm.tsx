@@ -19,7 +19,7 @@ type FieldErrors = Partial<Record<Field, string>>
 
 type MediaFormProps = {
     initialValues: MediaDraft
-    onSave: (draft: MediaDraft) => void
+    onSave: (draft: MediaDraft) => Promise<void>
     onCancel: () => void
 }
 
@@ -39,6 +39,10 @@ export function MediaForm(props: MediaFormProps) {
     // сохранить. Так сообщения не появляются, пока человек ещё ничего не ввёл.
     const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({})
     const [submitted, setSubmitted] = useState(false)
+    // ЛР 6: сохранение идёт в Supabase. pending блокирует повторную отправку,
+    // submitError показывает ошибку сети или базы, не стирая введённые значения.
+    const [pending, setPending] = useState(false)
+    const [submitError, setSubmitError] = useState('')
 
     function validate(): FieldErrors {
         const errors: FieldErrors = {}
@@ -85,8 +89,9 @@ export function MediaForm(props: MediaFormProps) {
         setTouched((current) => ({ ...current, [field]: true }))
     }
 
-    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
+        if (pending) return
 
         if (!canSave) {
             setError('Дождитесь справочника и выберите доступный жанр.')
@@ -100,17 +105,26 @@ export function MediaForm(props: MediaFormProps) {
         }
 
         setError('')
-        props.onSave({
-            ...draft,
-            title: draft.title.trim(),
-            description: draft.description.trim(),
-            year: Number(yearText.trim()),
-            rating: Number(ratingText.trim()),
-        })
+        try {
+            setPending(true)
+            setSubmitError('')
+            await props.onSave({
+                ...draft,
+                title: draft.title.trim(),
+                description: draft.description.trim(),
+                year: Number(yearText.trim()),
+                rating: Number(ratingText.trim()),
+            })
+        } catch (error: unknown) {
+            setSubmitError(error instanceof Error
+                ? error.message : 'Не удалось сохранить запись.')
+        } finally {
+            setPending(false)
+        }
     }
 
     return (
-        <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={(event) => void handleSubmit(event)} noValidate>
             <p className="form-note">
                 Поля, отмеченные <span className="required-mark">*</span>, обязательны для заполнения.
             </p>
@@ -255,8 +269,11 @@ export function MediaForm(props: MediaFormProps) {
             />
 
             {error && <p role="alert">{error}</p>}
+            {submitError && <p role="alert">{submitError}</p>}
 
-            <button type="submit" disabled={!canSave}>Сохранить</button>
+            <button type="submit" disabled={!canSave || pending}>
+                {pending ? 'Сохраняем…' : 'Сохранить'}
+            </button>
             <button type="button" onClick={props.onCancel}>Отмена</button>
         </form>
     )
