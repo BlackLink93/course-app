@@ -9,7 +9,7 @@ export type MediaItem = {
     status: WatchStatus
     year: number
     rating: number
-    genre: string // id из справочника жанров (public/demo/genres.json)
+    genre: string // id жанра из таблицы genres в Supabase (в БД — genre_id)
     favorite: boolean
 }
 export type MediaDraft = Omit<MediaItem, 'id'>
